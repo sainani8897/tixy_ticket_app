@@ -91,11 +91,13 @@ from controllers.ticket_controller import tickets_bp
 from controllers.auth_controller import auth_bp
 from controllers.dashboard_controller import dashboard_bp
 from controllers.settings_controller import settings_bp # NEW: Import settings blueprint
+from controllers.user_controller import user_bp
 
 app.register_blueprint(tickets_bp, url_prefix='/tickets')
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
 app.register_blueprint(settings_bp, url_prefix='/settings') # NEW: Register settings blueprint
+app.register_blueprint(user_bp, url_prefix='/user')
 
 # --- Redirect root to dashboard (requires login) ---
 @app.route('/')

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Tixy{% endblock %}
+
+{% block header_title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-xl">
+    <div class="text-center mb-6">
+        <img class="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-indigo-200" src="{{ profile_image_url }}" alt="Profile Picture">
+        <h2 class="text-2xl font-semibold text-gray-900">{{ current_user.email }}</h2>
+        <p class="text-gray-600">Role: {{ current_user.role | capitalize }}</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('user.profile') }}" enctype="multipart/form-data" class="space-y-6">
+        {{ form.hidden_tag() }}
+
+        <div>
+            <label for="{{ form.email.id }}" class="block text-sm font-medium text-gray-700">Email Address</label>
+            {{ form.email(class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm") }}
+            {% if form.email.errors %}
+                <ul class="text-red-600 text-sm mt-1">
+                    {% for error in form.email.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.profile_picture.id }}" class="block text-sm font-medium text-gray-700">
+                {{ form.profile_picture.label }}
+            </label>
+            <div class="mt-1 flex items-center">
+                {{ form.profile_picture(class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none") }}
+            </div>
+            {% if form.profile_picture.errors %}
+                <ul class="text-red-600 text-sm mt-1">
+                    {% for error in form.profile_picture.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <p class="mt-2 text-xs text-gray-500">Max size 16MB. Allowed: .jpg, .png, .gif</p>
+        </div>
+
+        {# If you added password fields - uncomment and use if you added them to ProfileEditForm #}
+        {#
+        <div>
+            <label for="{{ form.password.id }}" class="block text-sm font-medium text-gray-700">New Password</label>
+            {{ form.password(class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm") }}
+            {% if form.password.errors %}
+                <ul class="text-red-600 text-sm mt-1">
+                    {% for error in form.password.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div>
+            <label for="{{ form.confirm_password.id }}" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+            {{ form.confirm_password(class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm") }}
+            {% if form.confirm_password.errors %}
+                <ul class="text-red-600 text-sm mt-1">
+                    {% for error in form.confirm_password.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        #}
+
+        <div>
+            {{ form.submit(class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

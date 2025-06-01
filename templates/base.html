@@ -1,174 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Ticketing Tool{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     {# DataTables CSS - Essential for DataTables functionality #}
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css"
+    />
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            margin: 0;
-            padding: 0;
-        }
-        /* No custom media queries needed here for sidebar positioning, Tailwind handles it */
-        /* The .main-content-area margin-left is now handled by Tailwind classes directly on the div */
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f3f4f6;
+        margin: 0;
+        padding: 0;
+      }
+      /* No custom media queries needed here for sidebar positioning, Tailwind handles it */
+      /* The .main-content-area margin-left is now handled by Tailwind classes directly on the div */
     </style>
     {% block head %}{% endblock %}
-</head>
-<body class="flex flex-col sm:flex-row min-h-screen">
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-56 bg-gray-800 text-white shadow-lg flex-col z-50
-                             transform -translate-x-full transition-transform duration-300 ease-in-out
-                             sm:relative sm:translate-x-0 sm:flex">
-        <div class="p-6 text-2xl font-bold text-center border-b border-gray-700 flex items-center justify-center"> {# Added flex items-center justify-center #}
-            {# Tixy SVG Logo #}
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="inline-block mr-2">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5ZM5 7H19V17H5V7ZM17 9H7V11H17V9ZM17 13H7V15H17V13Z" fill="#6366F1"/>
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M10 7L10 17L8 17L8 7L10 7Z" fill="#FFFFFF"/>
-            </svg>
-            Tixy {# App Name #}
-        </div>
-        <nav class="flex-grow">
-            <ul class="py-4">
-                {% if current_user.is_authenticated %}
-                    <li class="px-6 py-3 hover:bg-gray-700 transition duration-150 ease-in-out">
-                        <a href="{{ url_for('dashboard.overview') }}" class="flex items-center text-gray-200 hover:text-white">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m0 0l7 7m-3 7v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                            Dashboard
-                        </a>
-                    </li>
-                    <li class="px-6 py-3 hover:bg-gray-700 transition duration-150 ease-in-out">
-                        <a href="{{ url_for('tickets.index') }}" class="flex items-center text-gray-200 hover:text-white">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                            All Tickets
-                        </a>
-                    </li>
-                    <li class="px-6 py-3 hover:bg-gray-700 transition duration-150 ease-in-out">
-                        <a href="{{ url_for('tickets.add_ticket') }}" class="flex items-center text-gray-200 hover:text-white">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Add Ticket
-                        </a>
-                    </li>
-                    {% if current_user.role == 'admin' %}
-                    <li class="px-6 py-3 hover:bg-gray-700 transition duration-150 ease-in-out">
-                        <a href="#" class="flex items-center text-gray-200 hover:text-white">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.352-1.234-.856-1.571M7 20h5v-2a3 3 0 01-5.356-1.857M7 20v-2c0-.653.352-1.234.856-1.571m0 0A5.002 5.002 0 0112 8a5.002 5.002 0 014.144 2.429m0 0c-.36.059-.72.091-1.08.091m-2.22 0c-.36.059-.72.091-1.08.091M12 10a5.002 5.002 0 00-4.144 2.429m2.22 0A5.002 5.002 0 0012 8c-.36-.059-.72-.091-1.08-.091m-2.22 0c-.36-.059-.72-.091-1.08-.091"></path></svg>
-                            Users (Admin)
-                        </a>
-                    </li>
-                    <li class="px-6 py-3 hover:bg-gray-700 transition duration-150 ease-in-out">
-                        <a href="{{ url_for('settings.smtp_settings') }}" class="flex items-center text-gray-200 hover:text-white">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            Settings
-                        </a>
-                    </li>
-                    {% endif %}
-                {% endif %}
-            </ul>
-        </nav>
+  </head>
+  <body class="flex flex-col sm:flex-row min-h-screen">
+    <aside
+      id="sidebar"
+      class="fixed inset-y-0 left-0 w-56 bg-gray-800 text-white shadow-lg flex-col z-50 transform -translate-x-full transition-transform duration-300 ease-in-out sm:relative sm:translate-x-0 sm:flex"
+    >
+      <div
+        class="p-6 text-2xl font-bold text-center border-b border-gray-700 flex items-center justify-center"
+      >
+        {# Added flex items-center justify-center #} {# Tixy SVG Logo #}
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          class="inline-block mr-2"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5ZM5 7H19V17H5V7ZM17 9H7V11H17V9ZM17 13H7V15H17V13Z"
+            fill="#6366F1"
+          />
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M10 7L10 17L8 17L8 7L10 7Z"
+            fill="#FFFFFF"
+          />
+        </svg>
+        Tixy {# App Name #}
+      </div>
+      <nav class="flex-grow">
+        <ul class="py-4">
+          {% if current_user.is_authenticated %}
+          <li
+            class="px-6 py-3 hover:bg-gray-700 transition duration-150 ease-in-out"
+          >
+            <a
+              href="{{ url_for('dashboard.overview') }}"
+              class="flex items-center text-gray-200 hover:text-white"
+            >
+              <svg
+                class="w-5 h-5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m0 0l7 7m-3 7v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                ></path>
+              </svg>
+              Dashboard
+            </a>
+          </li>
+          <li
+            class="px-6 py-3 hover:bg-gray-700 transition duration-150 ease-in-out"
+          >
+            <a
+              href="{{ url_for('tickets.index') }}"
+              class="flex items-center text-gray-200 hover:text-white"
+            >
+              <svg
+                class="w-5 h-5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                ></path>
+              </svg>
+              All Tickets
+            </a>
+          </li>
+          <li
+            class="px-6 py-3 hover:bg-gray-700 transition duration-150 ease-in-out"
+          >
+            <a
+              href="{{ url_for('tickets.add_ticket') }}"
+              class="flex items-center text-gray-200 hover:text-white"
+            >
+              <svg
+                class="w-5 h-5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              Add Ticket
+            </a>
+          </li>
+          <li
+            class="px-6 py-3 hover:bg-gray-700 transition duration-150 ease-in-out"
+          >
+            <a
+              href="{{ url_for('user.profile') }}"
+              class="flex items-center text-gray-200 hover:text-white"
+            >
+              <svg
+                class="w-5 h-5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                ></path>
+              </svg>
+              Profile
+            </a>
+          </li>
+          {% if current_user.role == 'admin' %}
+          <li
+            class="px-6 py-3 hover:bg-gray-700 transition duration-150 ease-in-out"
+          >
+            <a
+              href="#"
+              class="flex items-center text-gray-200 hover:text-white"
+            >
+              <svg
+                class="w-5 h-5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.352-1.234-.856-1.571M7 20h5v-2a3 3 0 01-5.356-1.857M7 20v-2c0-.653.352-1.234.856-1.571m0 0A5.002 5.002 0 0112 8a5.002 5.002 0 014.144 2.429m0 0c-.36.059-.72.091-1.08.091m-2.22 0c-.36.059-.72.091-1.08.091M12 10a5.002 5.002 0 00-4.144 2.429m2.22 0A5.002 5.002 0 0012 8c-.36-.059-.72-.091-1.08-.091m-2.22 0c-.36-.059-.72-.091-1.08-.091"
+                ></path>
+              </svg>
+              Users (Admin)
+            </a>
+          </li>
+          <li
+            class="px-6 py-3 hover:bg-gray-700 transition duration-150 ease-in-out"
+          >
+            <a
+              href="{{ url_for('settings.smtp_settings') }}"
+              class="flex items-center text-gray-200 hover:text-white"
+            >
+              <svg
+                class="w-5 h-5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                ></path>
+              </svg>
+              Settings
+            </a>
+          </li>
+          {% endif %} {% endif %}
+        </ul>
+      </nav>
 
-        <div class="p-6 border-t border-gray-700 text-sm">
-            {% if current_user.is_authenticated %}
-                <p class="text-gray-400">Logged in as:</p>
-                <p class="font-semibold text-white">{{ current_user.email }}</p>
-                <p class="text-gray-400">Role: <span class="font-semibold text-white">{{ current_user.role | capitalize }}</span></p>
-                <div class="mt-4">
-                    <a href="{{ url_for('auth.logout') }}" class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md transition duration-150 ease-in-out">
-                        Logout
-                    </a>
-                </div>
-            {% else %}
-                <p class="text-gray-400 mb-4">Not logged in.</p>
-                <a href="{{ url_for('auth.login') }}" class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md transition duration-150 ease-in-out mb-2">Login</a>
-                <a href="{{ url_for('auth.register') }}" class="block w-full text-center border border-indigo-600 hover:bg-indigo-700 hover:text-white text-indigo-600 py-2 rounded-md transition duration-150 ease-in-out">Register</a>
-            {% endif %}
+      <div class="p-6 border-t border-gray-700 text-sm">
+        {% if current_user.is_authenticated %}
+        <p class="text-gray-400">Logged in as:</p>
+        <p class="font-semibold text-white">{{ current_user.email }}</p>
+        <p class="text-gray-400">
+          Role:
+          <span class="font-semibold text-white"
+            >{{ current_user.role | capitalize }}</span
+          >
+        </p>
+        <div class="mt-4">
+          <a
+            href="{{ url_for('auth.logout') }}"
+            class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md transition duration-150 ease-in-out"
+          >
+            Logout
+          </a>
         </div>
+        {% else %}
+        <p class="text-gray-400 mb-4">Not logged in.</p>
+        <a
+          href="{{ url_for('auth.login') }}"
+          class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md transition duration-150 ease-in-out mb-2"
+          >Login</a
+        >
+        <a
+          href="{{ url_for('auth.register') }}"
+          class="block w-full text-center border border-indigo-600 hover:bg-indigo-700 hover:text-white text-indigo-600 py-2 rounded-md transition duration-150 ease-in-out"
+          >Register</a
+        >
+        {% endif %}
+      </div>
     </aside>
 
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden sm:hidden"></div>
+    <div
+      id="sidebar-overlay"
+      class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden sm:hidden"
+    ></div>
 
-    {# main-content-area classes for margin and padding #}
-    <div class="flex-grow ml-0 sm:ml-56 p-4 sm:p-8"> 
-        <header class="bg-white p-6 shadow-md rounded-lg mb-8 flex justify-between items-center">
-            <h1 class="text-3xl font-semibold text-gray-900">{% block header_title %}Welcome!{% endblock %}</h1>
-            
-            {# Mobile Menu Toggle Button #}
-            <button id="sidebarToggle" class="block sm:hidden p-2 rounded-md text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
+    <div class="flex-grow ml-0 sm:ml-20 p-4 sm:p-8">
+      <header
+        class="bg-white p-6 shadow-md rounded-lg mb-8 flex justify-between items-center"
+      >
+        <h1 class="text-3xl font-semibold text-gray-900">
+          {% block header_title %}Welcome!{% endblock %}
+        </h1>
 
-            {% if current_user.is_authenticated %}
-                <span class="text-gray-600 hidden sm:block">Hello, {{ current_user.email }}!</span> {# Hide on mobile to save space #}
-            {% endif %}
-        </header>
+        {# Mobile Menu Toggle Button #}
+        <button
+          id="sidebarToggle"
+          class="block sm:hidden p-2 rounded-md text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </button>
 
-        <div class="mb-6">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="p-4 mb-4 rounded-lg text-sm
-                            {% if category == 'success' %} bg-green-100 text-green-800 border border-green-200
-                            {% elif category == 'error' %} bg-red-100 text-red-800 border border-red-200
-                            {% else %} bg-blue-100 text-blue-800 border border-blue-200
-                            {% endif %}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
+        {% if current_user.is_authenticated %} {# UPDATED SECTION: Show profile
+        picture and email #}
+        <div class="flex items-center hidden sm:flex">
+          {# Use sm:flex instead of sm:block for proper alignment #}
+          <img
+            src="{{ url_for('static', filename='uploads/' + current_user.profile_image) }}"
+            alt="Profile Picture"
+            class="w-8 h-8 rounded-full mr-2 object-cover border border-gray-300"
+          />
+          {# Added border for visibility #}
+          <span class="text-gray-600">Hello, {{ current_user.email }}!</span>
         </div>
+        {% endif %}
+      </header>
 
-        <main class="bg-white p-8 rounded-lg shadow-xl">
-            {% block content %}{% endblock %}
-        </main>
+      <div class="mb-6">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div
+          class="p-4 mb-4 rounded-lg text-sm {% if category == 'success' %} bg-green-100 text-green-800 border border-green-200 {% elif category == 'error' %} bg-red-100 text-red-800 border border-red-200 {% else %} bg-blue-100 text-blue-800 border border-blue-200 {% endif %}"
+        >
+          {{ message }}
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+      </div>
+
+      <main class="bg-white p-8 rounded-lg shadow-xl">
+        {% block content %}{% endblock %}
+      </main>
     </div>
 
     {# jQuery (required by DataTables) #}
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
     {# DataTables JavaScript #}
     <script src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
 
     <script>
-        $(document).ready(function() {
-            const sidebar = $('#sidebar');
-            const sidebarToggle = $('#sidebarToggle');
-            const sidebarOverlay = $('#sidebar-overlay');
-            const body = $('body');
+      $(document).ready(function () {
+        const sidebar = $("#sidebar");
+        const sidebarToggle = $("#sidebarToggle");
+        const sidebarOverlay = $("#sidebar-overlay");
+        const body = $("body");
 
-            function toggleSidebar() {
-                // Toggle sidebar's slide-in/out effect
-                sidebar.toggleClass('-translate-x-full');
-                // Toggle overlay visibility
-                sidebarOverlay.toggleClass('hidden');
-                // Prevent body scroll when sidebar is open
-                body.toggleClass('overflow-hidden');
-            }
+        function toggleSidebar() {
+          // Toggle sidebar's slide-in/out effect
+          sidebar.toggleClass("-translate-x-full");
+          // Toggle overlay visibility
+          sidebarOverlay.toggleClass("hidden");
+          // Prevent body scroll when sidebar is open
+          body.toggleClass("overflow-hidden");
+        }
 
-            // Open sidebar on toggle button click
-            sidebarToggle.on('click', toggleSidebar);
+        // Open sidebar on toggle button click
+        sidebarToggle.on("click", toggleSidebar);
 
-            // Close sidebar when clicking the overlay
-            sidebarOverlay.on('click', toggleSidebar);
+        // Close sidebar when clicking the overlay
+        sidebarOverlay.on("click", toggleSidebar);
 
-            // Close sidebar automatically if screen resizes from mobile to desktop
-            $(window).on('resize', function() {
-                // Tailwind's 'sm' breakpoint is 640px. If window width is >= 640, ensure sidebar is visible
-                if ($(window).width() >= 640) { 
-                    sidebar.removeClass('-translate-x-full'); // Ensure sidebar is in its normal position
-                    sidebarOverlay.addClass('hidden');       // Hide overlay
-                    body.removeClass('overflow-hidden');      // Allow body scroll
-                }
-            });
+        // Close sidebar automatically if screen resizes from mobile to desktop
+        $(window).on("resize", function () {
+          // Tailwind's 'sm' breakpoint is 640px. If window width is >= 640, ensure sidebar is visible
+          if ($(window).width() >= 640) {
+            sidebar.removeClass("-translate-x-full"); // Ensure sidebar is in its normal position
+            sidebarOverlay.addClass("hidden"); // Hide overlay
+            body.removeClass("overflow-hidden"); // Allow body scroll
+          }
         });
+      });
     </script>
     {% block scripts %}{% endblock %}
-</body>
+  </body>
 </html>

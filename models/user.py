@@ -12,6 +12,13 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(50), default='user', nullable=False) # e.g., 'user', 'agent', 'admin'
+    
+     # NEW: Add the profile_image column
+    profile_image = db.Column(db.String(120), nullable=True, default='default.png') # Stores filename, e.g., 'user_id.png'
+    
+    # Relationships (if you have them defined here)
+    # reported_tickets = db.relationship('Ticket', foreign_keys='Ticket.reporter_id', backref='reporter', lazy=True)
+    # assigned_tickets = db.relationship('Ticket', foreign_keys='Ticket.assigned_to_id', backref='assignee', lazy=True)
 
     def set_password(self, password):
         """Hashes the given password and stores it."""
