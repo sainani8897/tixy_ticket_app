@@ -82,7 +82,7 @@ flask run --debug
 > **Note:** The `--debug` flag is useful during development as it automatically restarts the server on code changes.
 
 ### 6. Access the Frontend
-- Open your web browser and navigate to: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+- Open your web browser and navigate to: [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
 
 ## Usage
 
