@@ -86,11 +86,10 @@ flask run --debug
 
 ## Usage
 
-1. **Hold to Speak:** Click and hold the "Hold to Speak" button on the web page. The button will turn red and display "Recording...".
-2. **Speak:** Clearly speak into your microphone while holding the button.
-3. **Release:** Let go of the button when finished. The button will turn orange and display "Processing..." or "Thinking...".
-4. **Listen:** The AI assistant will process your speech and respond with audio playback.
-5. **Multi-turn Conversations:** The WebSocket connection stays open, allowing you to hold the button and speak again for additional turns in the conversation.
+1. **Register**: Navigate to `/auth/register` to create a new user account.
+2. **Login**: Use your registered credentials to log in.
+3. **Create Tickets**: Go to `/tickets/add` to create new tickets.
+4. **View & Edit**: Explore `/tickets` to see all tickets (or your reported tickets) and click on individual tickets to view details or edit them.
 
 
 ## Project Structure
