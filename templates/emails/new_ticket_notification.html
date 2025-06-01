@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Ticket Created: #{{ ticket.id }} - {{ ticket.title }}</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; }
+        .header { background-color: #4CAF50; color: white; padding: 10px 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { padding: 20px; }
+        .footer { text-align: center; font-size: 0.8em; color: #777; margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; }
+        .button { display: inline-block; padding: 10px 20px; margin-top: 15px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>New Ticket Created!</h2>
+        </div>
+        <div class="content">
+            <p>Dear {{ ticket.reporter.email or 'Reporter' }},</p>
+            <p>A new ticket has been created with the following details:</p>
+
+            <table>
+                <tr>
+                    <th>Ticket ID:</th>
+                    <td>#{{ ticket.id }}</td>
+                </tr>
+                <tr>
+                    <th>Title:</th>
+                    <td>{{ ticket.title }}</td>
+                </tr>
+                <tr>
+                    <th>Description:</th>
+                    <td>{{ ticket.description | wordwrap(70) }}</td>
+                </tr>
+                <tr>
+                    <th>Status:</th>
+                    <td>{{ ticket.status }}</td>
+                </tr>
+                <tr>
+                    <th>Priority:</th>
+                    <td>{{ ticket.priority }}</td>
+                </tr>
+                <tr>
+                    <th>Created By:</th>
+                    <td>{{ ticket.reporter.email or 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <th>Created On:</th>
+                    <td>{{ ticket.created_at.strftime('%Y-%m-%d %H:%M:%S') if ticket.created_at else 'N/A' }}</td>
+                </tr>
+            </table>
+
+            <p>You can view your ticket and its updates by logging into the system.</p>
+            <p style="text-align: center;">
+                <a href="{{ url_for('dashboard.overview', _external=True) }}" class="button">Go to Ticketing System</a>
+            </p>
+        </div>
+        <div class="footer">
+            <p>This is an automated notification. Please do not reply.</p>
+        </div>
+    </div>
+</body>
+</html>

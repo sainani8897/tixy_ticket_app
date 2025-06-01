@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}SMTP Settings{% endblock %}
+{% block header_title %}SMTP Configuration{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-xl">
+    <p class="text-gray-600 mb-6">Configure the SMTP server details for sending email notifications.</p>
+
+    <form method="POST" action="{{ url_for('settings.smtp_settings') }}" class="space-y-6">
+        <div>
+            <label for="smtp_host" class="block text-sm font-medium text-gray-700 mb-1">SMTP Host</label>
+            <input type="text" name="smtp_host" id="smtp_host" value="{{ config.smtp_host or '' }}" required
+                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                   placeholder="e.g., smtp.gmail.com">
+        </div>
+
+        <div>
+            <label for="smtp_port" class="block text-sm font-medium text-gray-700 mb-1">SMTP Port</label>
+            <input type="number" name="smtp_port" id="smtp_port" value="{{ config.smtp_port or 587 }}" required
+                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                   placeholder="e.g., 587 or 465">
+        </div>
+
+        <div class="flex items-center">
+            <input type="checkbox" name="smtp_use_tls" id="smtp_use_tls" value="true" {% if config.smtp_use_tls %}checked{% endif %}
+                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+            <label for="smtp_use_tls" class="ml-2 block text-sm text-gray-900">Use TLS (Recommended for Port 587)</label>
+        </div>
+
+        <div>
+            <label for="smtp_username" class="block text-sm font-medium text-gray-700 mb-1">SMTP Username</label>
+            <input type="text" name="smtp_username" id="smtp_username" value="{{ config.smtp_username or '' }}"
+                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                   placeholder="Your SMTP username (often your email address)">
+        </div>
+
+        <div>
+            <label for="smtp_password" class="block text-sm font-medium text-gray-700 mb-1">SMTP Password</label>
+            <input type="password" name="smtp_password" id="smtp_password" value="{{ config.smtp_password or '' }}"
+                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                   placeholder="Your SMTP password/app password">
+            <p class="mt-1 text-xs text-gray-500">
+                <span class="font-medium text-red-500">Warning:</span> For demonstration, passwords are stored unencrypted. Use environment variables or a secrets manager in production.
+            </p>
+        </div>
+
+        <div>
+            <label for="smtp_sender_email" class="block text-sm font-medium text-gray-700 mb-1">Sender Email Address</label>
+            <input type="email" name="smtp_sender_email" id="smtp_sender_email" value="{{ config.smtp_sender_email or '' }}" required
+                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                   placeholder="e.g., no-reply@yourdomain.com">
+        </div>
+
+        <button type="submit" class="w-full inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+            Save Settings
+        </button>
+    </form>
+</div>
+{% endblock %}

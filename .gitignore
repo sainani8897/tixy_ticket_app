@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+.venv/
+instance/
+static/uploads/
+*.env
+.flaskenv
+.pytest_cache/
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.ipynb_checkpoints
+.mypy_cache/
+.vscode/
+
+# Database files
+*.db # This will ignore your SQLite database file (e.g., tickets.db, site.db)
+*.sqlite
+*.sqlite3
+
+# Flask-Migrate specific
+/migrations/versions/*.pyc # Ignore compiled migration files
+
+# Uploaded files
+/static/uploads/ # Ignore uploaded files, as they can be large and are often managed differently in production
+
+# Environment variables (if you use .env files)
+.env
+.flaskenv
+
+# Editor-specific files
+.idea/ # IntelliJ IDEA
+*.sublime-project
+*.sublime-workspace
+.DS_Store # macOS
+Thumbs.db # Windows
+
+# Logs
+*.log
