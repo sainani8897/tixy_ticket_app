@@ -48,5 +48,112 @@ Follow these steps to get Tixy up and running on your local machine.
 First, clone the Tixy repository to your local machine:
 
 ```bash
-git clone [https://github.com/sainani8897/tixy_ticket_app.git](https://github.com/sainani8897/tixy_ticket_app.git)
+git clone https://github.com/sainani8897/tixy_ticket_app.git
 cd tixy_ticket_app # Navigate into your project directory
+
+### 2. Create a Virtual Environment (Recommended)
+
+```bash
+python -m venv venv
+venv\Scripts\activate   # On Windows
+#source venv/bin/activate  # On macOS/Linux
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Configure API Keys
+
+Create a `.env` file in the root directory of your project (same level as main.py) and add your OpenAI and Eleven Labs API keys:
+
+```bash
+YOUR_KEYS="your_api_key_here"
+```
+
+### 5. Run the Application 
+
+```bash
+uvicorn app:app --reload
+```
+> **Note:** The `--reload` flag is useful during development as it automatically restarts the server on code changes.
+
+### 6. Access the Frontend
+- Open your web browser and navigate to: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+## Usage
+
+1. **Hold to Speak:** Click and hold the "Hold to Speak" button on the web page. The button will turn red and display "Recording...".
+2. **Speak:** Clearly speak into your microphone while holding the button.
+3. **Release:** Let go of the button when finished. The button will turn orange and display "Processing..." or "Thinking...".
+4. **Listen:** The AI assistant will process your speech and respond with audio playback.
+5. **Multi-turn Conversations:** The WebSocket connection stays open, allowing you to hold the button and speak again for additional turns in the conversation.
+
+
+## Project Structure
+
+```
+.
+my_ticketing_app/
+├── app.py
+│ 
+│
+├── controllers/                 # Contains blueprint definitions and route logic (views).
+│   ├── __init__.py              # Makes 'controllers' a Python package.
+│   ├── auth_controller.py       # Handles user authentication routes (login, register, logout).
+│   ├── ticket_controller.py     # Manages ticket-related routes (add, edit, view, delete, attachments).
+│   ├── dashboard_controller.py  # Handles dashboard or main overview routes.
+│   └── (admin_controller.py)    # Optional: For admin-specific routes if separated.
+│
+├── models/                      # Defines your SQLAlchemy database models.
+│   ├── __init__.py              # Makes 'models' a Python package.
+│   ├── user.py                  # User model for authentication.
+│   ├── ticket.py                # Ticket model for issues/requests.
+│   └── attachment.py            # Model for file attachments linked to tickets.
+│
+├── static/                      # Static assets served directly by the web server (CSS, JS, images).
+│   ├── css/
+│   │   └── style.css            # Your custom CSS (if any, beyond Tailwind's utility classes).
+│   ├── js/
+│   │   └── main.js              # Your custom JavaScript files (if any).
+│   ├── uploads/                 # **Crucial: This is where uploaded attachments are stored.**
+│   │   └── .gitkeep             # (Optional) Empty file to ensure Git tracks an empty folder.
+│   └── images/                  # For logos, favicons, or other static images.
+│       └── tixy_logo.svg        # Your new Tixy SVG logo.
+│
+├── templates/                   # HTML templates rendered by Flask.
+│   ├── base.html                # Base template for consistent layout across pages.
+│   ├── auth/                    # Templates for authentication.
+│   │   ├── login.html
+│   │   └── register.html
+│   ├── tickets/                 # Templates for ticket management.
+│   │   ├── index.html           # List of all tickets.
+│   │   ├── add_ticket.html      # Form for adding new tickets.
+│   │   ├── edit_ticket.html     # Form for editing tickets.
+│   │   └── view_ticket.html     # Detailed view of a single ticket.
+│   ├── dashboard/
+│   │   └── overview.html        # Dashboard overview page.
+│   └── emails/                  # Templates for email notifications.
+│       ├── new_ticket_notification.html
+│       └── ticket_update_notification.html
+│
+├── utils/                       # Shared utility functions (e.g., email, helpers).
+│   ├── __init__.py              # Makes 'utils' a Python package.
+│   └── email_utils.py           # Functions for sending emails (Flask-Mail integration).
+│
+│
+├── .env                         # **Environment variables for local development (NOT committed to Git).**
+│                                # E.g., SECRET_KEY, DATABASE_URL, MAIL_USERNAME, MAIL_PASSWORD.
+├── .flaskenv                    # Optional: Special environment variables for Flask CLI (e.g., FLASK_APP).
+├── .gitignore                   # **Tells Git which files/folders to ignore** (e.g., venv, .env, __pycache__, /static/uploads/).
+```
+
+## Contributing
+
+Feel free to fork the repository, open issues, or submit pull requests.
+
+## License
+
+This project is open-source and available under the MIT License.
