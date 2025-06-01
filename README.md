@@ -50,6 +50,7 @@ First, clone the Tixy repository to your local machine:
 ```bash
 git clone https://github.com/sainani8897/tixy_ticket_app.git
 cd tixy_ticket_app # Navigate into your project directory
+```
 
 ### 2. Create a Virtual Environment (Recommended)
 
