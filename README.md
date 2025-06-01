@@ -77,9 +77,9 @@ YOUR_KEYS="your_api_key_here"
 ### 5. Run the Application 
 
 ```bash
-uvicorn app:app --reload
+flask run --debug
 ```
-> **Note:** The `--reload` flag is useful during development as it automatically restarts the server on code changes.
+> **Note:** The `--debug` flag is useful during development as it automatically restarts the server on code changes.
 
 ### 6. Access the Frontend
 - Open your web browser and navigate to: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
